@@ -13,7 +13,7 @@ const connectDBwithRetry = async (): Promise<void> => {
       console.log('MongoDB connected successfully');
     } catch (error) {
       console.error('Error connecting to MongoDB:', error);
-      setTimeout(connectDBwithRetry, 5000)
+      setTimeout(connectDBwithRetry, 10000)
     }
   };
 

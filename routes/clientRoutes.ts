@@ -6,6 +6,6 @@ const router = Router();
 router.post('/clients', ClientController.create);
 router.put('/clients/:email', ClientController.update);
 router.delete('/clients/:email', ClientController.delete);
-router.get('/', ClientController.getAll);
+router.get('/clients', ClientController.getAll);
 
 export default router;
