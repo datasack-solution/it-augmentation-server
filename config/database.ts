@@ -6,7 +6,9 @@ dotenv.config();
 
 const connectDBwithRetry = async (): Promise<void> => {
     try {
-      await mongoose.connect(process.env.MONGO_URI as string);
+      await mongoose.connect(process.env.MONGO_URI as string,{
+        connectTimeoutMS:60000,
+      });
       if (!checkIsServerStarted()) {
         startServer();
       }
