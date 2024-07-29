@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import clientRoutes from './routes/clientRoutes';
 require('dotenv').config();
 import mongoose from 'mongoose';
@@ -55,3 +55,7 @@ connectDBwithRetry();
 export const checkIsServerStarted = ():boolean =>{
   return serverStarted
 }
+
+export default (req:Request, res:Response) => {
+  app(req, res);
+};
