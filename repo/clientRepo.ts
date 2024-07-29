@@ -3,7 +3,7 @@ import Client, { ClientModel } from '../models/ClientsModel';
 class ClientRepository {
     async createOrUpdateClient(clientData: ClientModel):Promise<null> {
         try {
-            const existingClient = await Client.findOne({
+            let existingClient = await Client.findOne({
                 $and: [{ email: clientData.email }, { phone: clientData.phone }]
             });
     
@@ -17,11 +17,23 @@ class ClientRepository {
     
                 await existingClient.save();
                 return null
-            } else {
-                const newClient = new Client(clientData);
-                const result = await newClient.save();
-                return null
+            } 
+            existingClient = await Client.findOne({ email: clientData.email });
+            if (existingClient) {
+                existingClient.phone = clientData.phone;
+                existingClient.industry = clientData.industry;
+                existingClient.name = clientData.name;
+                existingClient.date = clientData.date;
+                existingClient.requirements = clientData.requirements;
+                existingClient.nda = clientData.nda;
+                existingClient.skillsets = clientData.skillsets;
+    
+                await existingClient.save();
+                return null;
             }
+            const newClient = new Client(clientData);
+            await newClient.save();
+            return null
         } catch (error) {
             console.error('Error creating/updating client:', error);
         }
