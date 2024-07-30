@@ -14,9 +14,11 @@ class UserController {
           const { user: newUser, token } = await UserService.SignUp(user);
       
           res.cookie('token', token, {
-            httpOnly:false,
-            secure:true,
-            sameSite:'none'
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite:'none',
+            domain:'it-augmentation-admin.vercel.app',
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
           });
       
           res.setHeader('Authorization', token).status(201).json({
@@ -39,10 +41,11 @@ class UserController {
       try{
         const {user,token} = await UserService.SignIn(email,password)
         res.cookie('token', token, {
-          httpOnly:false,
-          secure:true,
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
           sameSite:'none',
-          domain:'it-augmentation-server.vercel.app'
+          domain:'it-augmentation-admin.vercel.app',
+          maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
     
         res.setHeader('Authorization', token).status(201).json({
