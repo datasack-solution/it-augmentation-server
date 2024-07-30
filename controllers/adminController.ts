@@ -17,7 +17,7 @@ class UserController {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'none',
-            domain: '.vercel.app', 
+            // domain: '.vercel.app', 
             maxAge: 24 * 60 * 60 * 1000
           });
       
@@ -44,7 +44,7 @@ class UserController {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'none',
-          domain: '.vercel.app',
+          // domain: '.vercel.app',
           maxAge: 24 * 60 * 60 * 1000
         });
     
