@@ -16,9 +16,9 @@ class UserController {
           res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite:'none',
-            domain:'it-augmentation-admin.vercel.app',
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
+            sameSite: 'none',
+            domain: '.vercel.app', 
+            maxAge: 24 * 60 * 60 * 1000
           });
       
           res.setHeader('Authorization', token).status(201).json({
@@ -43,9 +43,9 @@ class UserController {
         res.cookie('token', token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite:'none',
-          domain:'it-augmentation-admin.vercel.app',
-          maxAge: 24 * 60 * 60 * 1000 // 1 day
+          sameSite: 'none',
+          domain: '.vercel.app',
+          maxAge: 24 * 60 * 60 * 1000
         });
     
         res.setHeader('Authorization', token).status(201).json({
