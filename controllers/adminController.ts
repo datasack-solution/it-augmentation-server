@@ -16,7 +16,7 @@ class UserController {
           res.cookie('token', token, {
             httpOnly:false,
             secure:true,
-            sameSite:'strict'
+            sameSite:'none'
           });
       
           res.setHeader('Authorization', token).status(201).json({
@@ -41,7 +41,7 @@ class UserController {
         res.cookie('token', token, {
           httpOnly:false,
           secure:true,
-          sameSite:'strict',
+          sameSite:'none',
           domain:'it-augmentation-server.vercel.app'
         });
     
