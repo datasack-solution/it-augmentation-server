@@ -5,6 +5,8 @@ import { DBErrCredentialsMismatch, DBErrInternal, DBErrOTPUserSignedUpByEmail, D
 import bcrypt from 'bcrypt'
 import adminRepo from "../repo/adminRepo";
 import createJSONWebToken from "../util/auth";
+import userRepo from '../repo/adminRepo';
+
 
 let inMemoryOTP:Map<string,string>=new Map()
 
@@ -42,17 +44,18 @@ class UserController {
       try{
         const {user,token} = await UserService.SignIn(email,password);
 
-        res.cookie(user._id as string, token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-          maxAge: 24 * 60 * 60 * 1000
-        });
+        // res.cookie("token", token, {
+        //   httpOnly: true,
+        //   secure: true,
+        //   sameSite: 'none',
+        //   maxAge: 24 * 60 * 60 * 1000
+        // });
     
         res.setHeader('Authorization', token).status(201).json({
           message: 'User Logged In up Successfully',
           success: true,
           user: user,
+          token
         });
 
         next();
@@ -73,10 +76,8 @@ class UserController {
 
     public async authUser(req:Request,res:Response,next:NextFunction):Promise<void>{
      try{
-      const token = req.cookies
-      console.log("tokens on authuser: ",token)
+      const token = req.headers.authorization?.split(' ')[1];
       if (!token){
-        console.log("tokens are not found 401")
          res.status(401).json({message:"User Not Authorized",success:false})
         return
       }
@@ -94,20 +95,16 @@ class UserController {
      }
     }
 
-    public async signout(req:Request,res:Response):Promise<void>{
-      try{
-        const {email}=req.body
-        const user = await  adminRepo.findOneByEmail(email)
-        if (user){
-          res.clearCookie(user._id as string)
-          res.status(200).json({message:"cookie cleared"})
-        }else{
-          res.json({message:"cookie cannot be deleted"})
-        }
-      }catch(err:any){
-        res.status(500).json({ message:  `An unexpected error occurred: ${err}`, success: false });
-      }
-    }
+    // public async signout(req:Request,res:Response):Promise<void>{
+    //   req.session.destroy((err:any)=>{
+    //     if (err){
+    //       return res.status(500).json({message:'logout failed'})
+    //     }else{
+    //       res.clearCookie('connect.sid',{path:'/'})
+    //       res.status(200).json({message:'logout successfully'})
+    //     }
+    //   })
+    // }
 
     public async sendOTP(req:Request,res:Response,next:NextFunction):Promise<void>{
       try{

@@ -14,7 +14,7 @@ export interface JwtPayload extends BaseJwtPayload {
 interface UserServiceImplementation{
     SignUp:(user:AdminModel)=>Promise<{ user: AdminModel; token: string }>,
     SignIn:(email:string,password:string)=>Promise<{user:AdminModel;token:string}>
-    AuthUser:(token:Record<string, any>)=>Promise<{user:AdminModel}>
+    AuthUser:(token:string)=>Promise<{user:AdminModel}>
     SendOTP:(email:string, accountVerification:boolean )=>Promise<{msg:string,otp:string}>
     UpdateUser:(email:string,userName:string,password:string)=>Promise<{user:AdminModel}>
     ResetPassword:(email:string,password:string)=>Promise<{user:AdminModel}>
@@ -52,59 +52,59 @@ class UserService implements UserServiceImplementation {
  }
 
 
-//  async AuthUser(token: Record<string, any>): Promise<{ user: AdminModel }> {
-//   const tokenKey = process.env.TOKEN_KEY || '';
-//   try {
-//     const decoded = jwt.verify(token, tokenKey) as JwtPayload; 
-//     const userId = decoded.id;
-//     if (!userId) {
-//       throw new DBErrUserNotFound();
-//     }
-//     const user = await userRepo.findOneById(userId);
-//     if (user) {
-//       return { user };
-//     } else {
-//       throw new DBErrUserNotFound();
-//     }
-//   } catch (err) {
-//     if (err instanceof DBErrTokenExpired) {
-//       throw new DBErrTokenExpired();
-//     } else {
-//       throw err;
-//     }
-//   }
-// }
-
-async  AuthUser(tokens: Record<string, any>): Promise<{ user: AdminModel }> {
-  const tokenKeyEnv = process.env.TOKEN_KEY || '';
-
-  for (const tokenKey in tokens) {
-    const token = tokens[tokenKey];
-
-    try {
-      const decoded = jwt.verify(token, tokenKeyEnv) as JwtPayload;
-      const userId = decoded.id;
-
-      if (!userId) {
-        continue; // If userId is not found, continue to the next token
-      }
-
-      const user = await userRepo.findOneById(userId);
-      console.log("got user: ",user)
-      if (user) {
-        return { user }; // Return the user if found
-      }
-    } catch (err) {
-      if (err instanceof jwt.TokenExpiredError) {
-        continue; // If the token is expired, continue to the next token
-      } else {
-        throw err; // For other errors, throw the error
-      }
+ async AuthUser(token: string): Promise<{ user: AdminModel }> {
+  const tokenKey = process.env.TOKEN_KEY || '';
+  try {
+    const decoded = jwt.verify(token, tokenKey) as JwtPayload; 
+    const userId = decoded.id;
+    if (!userId) {
+      throw new DBErrUserNotFound();
+    }
+    const user = await userRepo.findOneById(userId);
+    if (user) {
+      return { user };
+    } else {
+      throw new DBErrUserNotFound();
+    }
+  } catch (err) {
+    if (err instanceof DBErrTokenExpired) {
+      throw new DBErrTokenExpired();
+    } else {
+      throw err;
     }
   }
-
-  throw new DBErrUserNotFound(); // Throw error if no valid user is found
 }
+
+// async  AuthUser(tokens: Record<string, any>): Promise<{ user: AdminModel }> {
+//   const tokenKeyEnv = process.env.TOKEN_KEY || '';
+
+//   for (const tokenKey in tokens) {
+//     const token = tokens[tokenKey];
+
+//     try {
+//       const decoded = jwt.verify(token, tokenKeyEnv) as JwtPayload;
+//       const userId = decoded.id;
+
+//       if (!userId) {
+//         continue; // If userId is not found, continue to the next token
+//       }
+
+//       const user = await userRepo.findOneById(userId);
+//       console.log("got user: ",user)
+//       if (user) {
+//         return { user }; // Return the user if found
+//       }
+//     } catch (err) {
+//       if (err instanceof jwt.TokenExpiredError) {
+//         continue; // If the token is expired, continue to the next token
+//       } else {
+//         throw err; // For other errors, throw the error
+//       }
+//     }
+//   }
+
+//   throw new DBErrUserNotFound(); // Throw error if no valid user is found
+// }
 
 
 async SendOTP(email:string,accountVerification:boolean):Promise<{msg:string,otp:string}>{
