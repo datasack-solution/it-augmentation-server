@@ -10,8 +10,8 @@ export const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors({
-  // origin: "https://it-augmentation-admin.vercel.app",
-  origin:'http://localhost:3000',
+  origin: "https://it-augmentation-admin.vercel.app",
+  // origin:'http://localhost:3000',
   credentials: true,
 }))
 app.set('trust proxy', 1);
