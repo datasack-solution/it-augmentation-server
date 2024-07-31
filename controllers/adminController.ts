@@ -2,22 +2,23 @@ import {  AdminModel } from "../models/AdminModel";
 import UserService from "../service/AdminService";
 import {Request,Response,NextFunction} from 'express'
 import { DBErrCredentialsMismatch, DBErrInternal, DBErrOTPUserSignedUpByEmail, DBErrTokenExpired, DBErrUserAlreadyExist, DBErrUserNotFound } from "../util/handleErrors";
-
+import bcrypt from 'bcrypt'
+import adminRepo from "../repo/adminRepo";
+import createJSONWebToken from "../util/auth";
 
 let inMemoryOTP:Map<string,string>=new Map()
 
 class UserController {
-    public async signUpEmail(req: Request, res: Response): Promise<void> {
+    public async signUpEmail(req: any, res: any): Promise<void> {
         const { userName, email, password } = req.body;
         try {
           const user: AdminModel = { userName, email, password } as AdminModel;
           const { user: newUser, token } = await UserService.SignUp(user);
-      
-          res.cookie('token', token, {
+
+          res.cookie(user._id, token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: true,
             sameSite: 'none',
-            // domain: '.vercel.app', 
             maxAge: 24 * 60 * 60 * 1000
           });
       
@@ -39,12 +40,12 @@ class UserController {
     public async signInEmail(req:Request,res:Response,next:NextFunction):Promise<void>{
       const {email,password} = req.body
       try{
-        const {user,token} = await UserService.SignIn(email,password)
-        res.cookie('token', token, {
+        const {user,token} = await UserService.SignIn(email,password);
+
+        res.cookie(user._id as string, token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: true,
           sameSite: 'none',
-          // domain: '.vercel.app',
           maxAge: 24 * 60 * 60 * 1000
         });
     
@@ -72,13 +73,15 @@ class UserController {
 
     public async authUser(req:Request,res:Response,next:NextFunction):Promise<void>{
      try{
-      const token = req.cookies.token
+      const token = req.cookies
+      console.log("tokens on authuser: ",token)
       if (!token){
-         res.status(401).json({message:"User Not Authorized",status:false})
+        console.log("tokens are not found 401")
+         res.status(401).json({message:"User Not Authorized",success:false})
         return
       }
       const {user}= await UserService.AuthUser(token)
-        res.status(200).json({message:"successfully authorized",status:true,user})
+        res.status(200).json({message:"successfully authorized",success:true,user})
       next();
      }catch(err:any){
       if (err instanceof DBErrTokenExpired){
@@ -89,6 +92,21 @@ class UserController {
         res.status(500).json({ message:  `An unexpected error occurred: ${err}`, success: false });
       }
      }
+    }
+
+    public async signout(req:Request,res:Response):Promise<void>{
+      try{
+        const {email}=req.body
+        const user = await  adminRepo.findOneByEmail(email)
+        if (user){
+          res.clearCookie(user._id as string)
+          res.status(200).json({message:"cookie cleared"})
+        }else{
+          res.json({message:"cookie cannot be deleted"})
+        }
+      }catch(err:any){
+        res.status(500).json({ message:  `An unexpected error occurred: ${err}`, success: false });
+      }
     }
 
     public async sendOTP(req:Request,res:Response,next:NextFunction):Promise<void>{
