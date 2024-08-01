@@ -9,9 +9,20 @@ require('dotenv').config();
 export const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
+const allowedOrigins = [
+  'https://it-augmentation-admin.vercel.app',
+  'https://itstaffaugmentation.datasack.in'
+];
+
 app.use(cors({
-  origin: "https://it-augmentation-admin.vercel.app",
-  // origin:'http://localhost:3000',
+  origin:function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }))
 app.set('trust proxy', 1);
