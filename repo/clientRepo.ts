@@ -1,4 +1,5 @@
-import Client, { ClientModel } from '../models/ClientsModel';
+import Client, { ClientModel, SkillSet } from '../models/ClientsModel';
+
 
 class ClientRepository {
     async createOrUpdateClient(clientData: ClientModel):Promise<null> {
@@ -13,8 +14,15 @@ class ClientRepository {
                 existingClient.date = clientData.date;
                 existingClient.requirements = clientData.requirements;
                 existingClient.nda = clientData.nda;
-                existingClient.skillsets = clientData.skillsets
-    
+                // appending new skills into it
+                if (clientData.arrSkillsets && existingClient.arrSkillsets) {
+                    existingClient.arrSkillsets = [
+                        ...existingClient.arrSkillsets,
+                        ...clientData.arrSkillsets
+                    ];
+                } else if (clientData.arrSkillsets) {
+                    existingClient.arrSkillsets = clientData.arrSkillsets;
+                }                
                 await existingClient.save();
                 return null
             } 
@@ -26,7 +34,15 @@ class ClientRepository {
                 existingClient.date = clientData.date;
                 existingClient.requirements = clientData.requirements;
                 existingClient.nda = clientData.nda;
-                existingClient.skillsets = clientData.skillsets;
+                // existingClient.arrSkillsets = clientData.arrSkillsets;
+                if (clientData.arrSkillsets && existingClient.arrSkillsets) {
+                    existingClient.arrSkillsets = [
+                        ...existingClient.arrSkillsets,
+                        ...clientData.arrSkillsets
+                    ];
+                } else if (clientData.arrSkillsets) {
+                    existingClient.arrSkillsets = clientData.arrSkillsets;
+                }   
     
                 await existingClient.save();
                 return null;

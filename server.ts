@@ -12,7 +12,7 @@ app.use(bodyParser.json())
 
 const allowedOrigins = [
   'https://it-augmentation-admin.vercel.app',
-  'https://itstaffaugmentation.datasack.in'
+  'https://itstaffaugmentation.datasack.in',
 ];
 
 app.use(cors({

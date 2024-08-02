@@ -30,7 +30,7 @@ export interface ClientModel extends Document {
     date: string;
     requirements: string;
     nda: boolean;
-    skillsets?: SkillSet;
+    arrSkillsets?: SkillSet[];
     city?: string;
     contactedChannel?: 'Call' | 'WhatsApp' | 'VoiceMail' | 'Email';
     responded?: boolean;
@@ -68,7 +68,7 @@ export const ClientSchema = new Schema({
     date: { type: String, required: true },
     requirements: { type: String, required: false },
     nda: { type: Boolean, required: true },
-    skillsets: { type: skillSetSchema, required: false },
+    arrSkillsets: { type: [skillSetSchema], required: false },
     city: {
         type: String,
         required: false, 
@@ -92,10 +92,9 @@ export const ClientSchema = new Schema({
     }
 }, { timestamps: true });
 
-export default mongoose.model<ClientModel>('Client', ClientSchema);
+export default mongoose.model<ClientModel>('TestClient', ClientSchema);
 
-
-const sampleTechnologyArray: MainCategory[] = [
+const sampleTechnologyArray1: MainCategory[] = [
     {
         mainCategory: 'Development Technologies',
         subcategories: [
@@ -144,11 +143,133 @@ const sampleTechnologyArray: MainCategory[] = [
     },
 ];
 
-const sampleCustomTechsData: TechnologyItem[] = [
+const sampleTechnologyArray2: MainCategory[] = [
+    {
+        mainCategory: 'Deployment',
+        subcategories: [
+            {
+                subcategory: 'Html',
+                items: [{
+                    techName: "HTML5",
+                    quantity: 23
+                }]
+            },
+            {
+                subcategory: 'Mobile',
+                items: [
+                    {
+                        techName: "XAMARIN",
+                        quantity: 3
+                    },
+                    {
+                        techName: "KOTLIN",
+                        quantity: 2
+                    }
+                ]
+            },
+        ],
+    },
+    {
+        mainCategory: 'Data Management and Analytics',
+        subcategories: [
+            {
+                subcategory: 'Database',
+                items: [{
+                    techName:"MYSQL",
+                    quantity:23
+                }]
+            },
+            {
+                subcategory: 'Analytics',
+                items:[
+                    {
+                        techName:"POWER BI",
+                        quantity:23
+                    }
+                ]
+            },
+        ],
+    },
+];
+
+
+const sampleTechnologyArray3: MainCategory[] = [
+    {
+        mainCategory: 'Deployment',
+        subcategories: [
+            {
+                subcategory: 'Html',
+                items: [{
+                    techName: "HTML5",
+                    quantity: 23
+                }]
+            },
+            {
+                subcategory: 'Mobile',
+                items: [
+                    {
+                        techName: "XAMARIN",
+                        quantity: 3
+                    },
+                    {
+                        techName: "KOTLIN",
+                        quantity: 2
+                    }
+                ]
+            },
+        ],
+    },
+    {
+        mainCategory: 'Data Management and Analytics',
+        subcategories: [
+            {
+                subcategory: 'Database',
+                items: [{
+                    techName:"MYSQL",
+                    quantity:23
+                }]
+            },
+            {
+                subcategory: 'Analytics',
+                items:[
+                    {
+                        techName:"POWER BI",
+                        quantity:23
+                    }
+                ]
+            },
+        ],
+    },
+];
+
+const sampleCustomTechsData1: TechnologyItem[] = [
     { techName: 'T24', quantity: 1 },
 ];
 
+const sampleCustomTechsData2: TechnologyItem[] = [
+    { techName: 'DJANGO', quantity: 81 },
+];
+
+const sampleCustomTechsData3: TechnologyItem[] = [
+    { techName: 'DJANGO', quantity: 81 },
+];
+
 export const skillsets: SkillSet = {
-    predefinedTechData: sampleTechnologyArray,
-    customTechsData: sampleCustomTechsData
+    predefinedTechData: sampleTechnologyArray1,
+    customTechsData: sampleCustomTechsData1
 }
+
+export const arrSkillsets:SkillSet[]=[
+    {
+        predefinedTechData:sampleTechnologyArray1,
+        customTechsData:sampleCustomTechsData1
+    },
+    {
+        predefinedTechData:sampleTechnologyArray2,
+        customTechsData:sampleCustomTechsData2
+    },
+    {
+        predefinedTechData:sampleTechnologyArray3,
+        customTechsData:sampleCustomTechsData3
+    }
+]

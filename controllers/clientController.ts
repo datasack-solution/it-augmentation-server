@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ClientRepository from '../repo/clientRepo';
-import { ClientModel, TechnologyItem } from '../models/ClientsModel';
+import {  ClientModel, SkillSet, TechnologyItem } from '../models/ClientsModel';
 import { convertRawItemsToBackendStructure } from '../util/helper';
 
 class ClientController {
@@ -10,8 +10,13 @@ class ClientController {
             const predefinedData: { [key: string]: number } = clientData.skillsets?.predefinedTechData || {}
             const customSkillData: TechnologyItem[] = clientData.skillsets?.customTechsData || []
 
-            const skillsets = convertRawItemsToBackendStructure(predefinedData, customSkillData)
-            const clientReqData: ClientModel = { ...clientData, skillsets }
+            const skillsets:SkillSet = convertRawItemsToBackendStructure(predefinedData, customSkillData)
+            
+            //convert this to arrSkillsets for db conversion
+            const arrSkillsets:SkillSet[]=[]
+            arrSkillsets.push(skillsets)
+
+            const clientReqData: ClientModel = { ...clientData, arrSkillsets }
             const client = await ClientRepository.createOrUpdateClient(clientReqData);
             res.status(201).json(client);
         } catch (error) {

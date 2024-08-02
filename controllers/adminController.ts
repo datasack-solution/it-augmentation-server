@@ -2,10 +2,6 @@ import {  AdminModel } from "../models/AdminModel";
 import UserService from "../service/AdminService";
 import {Request,Response,NextFunction} from 'express'
 import { DBErrCredentialsMismatch, DBErrInternal, DBErrOTPUserSignedUpByEmail, DBErrTokenExpired, DBErrUserAlreadyExist, DBErrUserNotFound } from "../util/handleErrors";
-import bcrypt from 'bcrypt'
-import adminRepo from "../repo/adminRepo";
-import createJSONWebToken from "../util/auth";
-import userRepo from '../repo/adminRepo';
 
 
 let inMemoryOTP:Map<string,string>=new Map()
@@ -43,14 +39,6 @@ class UserController {
       const {email,password} = req.body
       try{
         const {user,token} = await UserService.SignIn(email,password);
-
-        // res.cookie("token", token, {
-        //   httpOnly: true,
-        //   secure: true,
-        //   sameSite: 'none',
-        //   maxAge: 24 * 60 * 60 * 1000
-        // });
-    
         res.setHeader('Authorization', token).status(201).json({
           message: 'User Logged In up Successfully',
           success: true,
@@ -95,16 +83,6 @@ class UserController {
      }
     }
 
-    // public async signout(req:Request,res:Response):Promise<void>{
-    //   req.session.destroy((err:any)=>{
-    //     if (err){
-    //       return res.status(500).json({message:'logout failed'})
-    //     }else{
-    //       res.clearCookie('connect.sid',{path:'/'})
-    //       res.status(200).json({message:'logout successfully'})
-    //     }
-    //   })
-    // }
 
     public async sendOTP(req:Request,res:Response,next:NextFunction):Promise<void>{
       try{
@@ -153,7 +131,6 @@ class UserController {
         } else {
           res.status(500).json({ message: `An unexpected error occurred: ${err}`, success: false });
         }
-        
       }
     }
 
