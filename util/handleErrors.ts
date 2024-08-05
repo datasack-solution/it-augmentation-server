@@ -6,6 +6,13 @@ export class DBErrUserAlreadyExist extends Error {
       this.name = "User Already Exist"
     }
   }
+
+  export class DBErrIsAdminExist extends Error {
+    constructor() {
+      super();
+      this.name = "Only one admin should be created"
+    }
+  }
   
   export class DBErrTaskAlreadyExist extends Error {
     constructor() {

@@ -1,26 +1,21 @@
 import {  AdminModel } from "../models/AdminModel";
 import UserService from "../service/AdminService";
 import {Request,Response,NextFunction} from 'express'
-import { DBErrCredentialsMismatch, DBErrInternal, DBErrOTPUserSignedUpByEmail, DBErrTokenExpired, DBErrUserAlreadyExist, DBErrUserNotFound } from "../util/handleErrors";
+import { DBErrCredentialsMismatch, DBErrInternal, DBErrIsAdminExist, DBErrOTPUserSignedUpByEmail, DBErrTokenExpired, DBErrUserAlreadyExist, DBErrUserNotFound } from "../util/handleErrors";
 
 
 let inMemoryOTP:Map<string,string>=new Map()
 
 class UserController {
     public async signUpEmail(req: any, res: any): Promise<void> {
-        const { userName, email, password } = req.body;
+        const { userName, email, password,role } = req.body;
         try {
-          const user: AdminModel = { userName, email, password } as AdminModel;
-          const { user: newUser, token } = await UserService.SignUp(user);
-
-          res.cookie(user._id, token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            maxAge: 24 * 60 * 60 * 1000
-          });
+          const user: AdminModel = { userName, email, password,role } as AdminModel;
+          console.log("income user",user)
+          
+          const { user: newUser } = await UserService.SignUp(user);
       
-          res.setHeader('Authorization', token).status(201).json({
+          res.status(201).json({
             message: 'User Signed up Successfully',
             success: true,
             user: newUser,
@@ -30,6 +25,8 @@ class UserController {
             res.status(409).json({ message: err.name, success: false });
           } else if (err instanceof DBErrInternal) {
             res.status(500).json({ message: err.name, success: false });
+          }else if (err instanceof DBErrIsAdminExist) {
+            res.status(400).json({ message: err.name, success: false });
           } else {
             res.status(500).json({ message: 'An unexpected error occurred', success: false });
           }
@@ -83,6 +80,21 @@ class UserController {
      }
     }
 
+    
+    public async getUsers(req:Request,res:Response,next:NextFunction):Promise<void>{
+      try{
+       const users= await UserService.GetUsers()
+         res.status(200).json({message:"successfully retrieved all users",success:true,users})
+       next();
+      }catch(err:any){
+       if (err instanceof DBErrInternal) {
+         res.status(500).json({ message: err.name, success: false });
+       } else {
+         res.status(500).json({ message:  `An unexpected error occurred: ${err}`, success: false });
+       }
+      }
+     }
+
 
     public async sendOTP(req:Request,res:Response,next:NextFunction):Promise<void>{
       try{
@@ -120,9 +132,27 @@ class UserController {
 
     public async updateUser(req:Request,res:Response):Promise<void>{
       try{
-        const {userName,email,password}=req.body
-        const {user} =await UserService.UpdateUser(email,userName,password)
+        const {userName,email,password, role}=req.body
+        console.log("incoming update:",userName,email,password,role)
+        const {user} =await UserService.UpdateUser(email,userName,password,role)
         res.status(201).json({message:"successfully user profile updated",success:true,user})
+      }catch(err:any){
+        if (err instanceof DBErrUserNotFound){
+          res.status(404).json({ message: err.name, success: false });
+        }else if (err instanceof DBErrInternal) {
+          res.status(500).json({ message: err.name, success: false });
+        } else {
+          res.status(500).json({ message: `An unexpected error occurred: ${err}`, success: false });
+        }
+      }
+    }
+
+    public async deleteUser(req:Request,res:Response):Promise<void>{
+      try{
+        const {email}=req.params
+        await UserService.DeleteUser(email)
+        res.status(201).json({message:"successfully user profile deleted",success:true})
+
       }catch(err:any){
         if (err instanceof DBErrUserNotFound){
           res.status(404).json({ message: err.name, success: false });

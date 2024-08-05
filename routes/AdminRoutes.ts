@@ -11,6 +11,7 @@ router.post('/send-otp', AdminController.sendOTP);
 router.post('/verify-otp', AdminController.verifyOTP);
 router.put('/update-user',AdminController.updateUser);
 router.put('/reset-password', AdminController.resetPassword);
-// router.post('/signout', AdminController.signout);
+router.delete('/delete-user/:email',AdminController.deleteUser)
+router.get('/get-users',AdminController.getUsers)
 
 export default router;
