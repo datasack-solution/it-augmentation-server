@@ -118,7 +118,6 @@ class UserService implements UserServiceImplementation {
     if (role=='admin'){
       const {isExist,user}= await userRepo.isAdminExists()
       if (isExist && user!=null){
-        console.log("got user with admin:",user)
         await userRepo.UpdateUser(user.email,user.userName,user.password,'user')
       }
     }

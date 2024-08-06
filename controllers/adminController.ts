@@ -11,7 +11,6 @@ class UserController {
         const { userName, email, password,role } = req.body;
         try {
           const user: AdminModel = { userName, email, password,role } as AdminModel;
-          console.log("income user",user)
           
           const { user: newUser } = await UserService.SignUp(user);
       
@@ -133,7 +132,6 @@ class UserController {
     public async updateUser(req:Request,res:Response):Promise<void>{
       try{
         const {userName,email,password, role}=req.body
-        console.log("incoming update:",userName,email,password,role)
         const {user} =await UserService.UpdateUser(email,userName,password,role)
         res.status(201).json({message:"successfully user profile updated",success:true,user})
       }catch(err:any){
