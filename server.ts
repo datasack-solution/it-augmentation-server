@@ -4,6 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import adminRoutes from './routes/AdminRoutes';
 import clientRoutes from './routes/clientRoutes';
+import clientRoutesNew from './routes/clientRoutesNew';
 require('dotenv').config();
 
 export const app = express()
@@ -13,6 +14,10 @@ app.use(bodyParser.json())
 const allowedOrigins = [
   'https://it-augmentation-admin.vercel.app',
   'https://itstaffaugmentation.datasack.in',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://datasack.in/itstaffaugmentation',
+  'https://datasack.in/'
 ];
 
 app.use(cors({
@@ -33,6 +38,7 @@ app.use(cookieParser())
 app.use(express.json())
 app.use('/', clientRoutes);
 app.use('/', adminRoutes);
+app.use('/', clientRoutesNew);
 
 let serverStarted=false
 export const startServer = () => {
