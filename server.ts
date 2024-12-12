@@ -17,8 +17,8 @@ const allowedOrigins = [
   'https://it-staff-augmentation-new.vercel.app',
   'http://localhost:3000',
   'http://localhost:3001',
-  'https://datasack.in/itstaffaugmentation',
-  'https://datasack.in'
+  'https://www.datasack.in/itstaffaugmentation',
+  'https://www.datasack.in'
 ];
 
 app.use(cors({
