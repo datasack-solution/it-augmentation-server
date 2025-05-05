@@ -83,3 +83,42 @@ const ClientSchema = new Schema<ClientDocument>({
 ClientSchema.index({ email: 1 }, { unique: true })
 
 export const Client = mongoose.model<ClientDocument>("Client", ClientSchema);
+
+
+interface BrowserInfo{
+  userAgent: string;
+  platform: string;
+  language: string;
+}
+
+export interface TrackingData {
+  country?: string;
+  city?: string;
+  visitDate: Date;
+  page: string;
+  browserInfo: BrowserInfo,
+  scrollPercent: number;
+  sessionDuration: number; // in milliseconds
+  clickEvents: string[];   // Array of clicked element labels
+}
+
+
+const browserInfoSchema = new Schema<BrowserInfo>({
+  userAgent:{ type: String, required: true },
+  platform:{ type: String, required: true },
+  language:{ type: String, required: true },
+})
+
+
+const trackingSchema = new Schema<TrackingData>({
+  country: { type: String, required: false },
+  city: { type: String, required: false },
+  visitDate: {type: Date, required: true},
+  browserInfo: browserInfoSchema,
+  scrollPercent: {type: Number,required: true},
+  sessionDuration: {type: Number,required: true},
+  clickEvents: [{type:String, required:false}]
+});
+
+
+export const TrackingDetailModel = mongoose.model<TrackingData>("TrackingData", trackingSchema);
