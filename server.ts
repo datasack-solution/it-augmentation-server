@@ -19,11 +19,13 @@ const allowedOrigins = [
   'http://localhost:3001',
   'https://www.datasack.in/itstaffaugmentation',
   'https://www.datasack.in',
+  'https://datasack.in/',
   'https://datasack.in/itstaffaugmentation/'
 ];
 
 app.use(cors({
   origin:function (origin, callback) {
+    console.log("origin",origin)
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
