@@ -18,7 +18,8 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
   'https://www.datasack.in/itstaffaugmentation',
-  'https://www.datasack.in'
+  'https://www.datasack.in',
+  'https://datasack.in/itstaffaugmentation/'
 ];
 
 app.use(cors({
