@@ -94,6 +94,9 @@ interface BrowserInfo{
 export interface TrackingData {
   country?: string;
   city?: string;
+  region?:string;
+  location?:string;
+  postal?:string;
   visitDate: Date;
   page: string;
   browserInfo: BrowserInfo,
@@ -113,6 +116,9 @@ const browserInfoSchema = new Schema<BrowserInfo>({
 const trackingSchema = new Schema<TrackingData>({
   country: { type: String, required: false },
   city: { type: String, required: false },
+  region: { type: String, required: false },
+  location: { type: String, required: false },
+  postal: { type: String, required: false },
   visitDate: {type: Date, required: true},
   browserInfo: browserInfoSchema,
   scrollPercent: {type: Number,required: true},
